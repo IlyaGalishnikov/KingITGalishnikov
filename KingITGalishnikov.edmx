@@ -1,0 +1,414 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="Хранилище KingITGalishnikovModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Arenda">
+          <Key>
+            <PropertyRef Name="ID_rent" />
+          </Key>
+          <Property Name="ID_rent" Type="int" Nullable="false" />
+          <Property Name="ID_tenant" Type="int" />
+          <Property Name="Number_SC" Type="int" />
+          <Property Name="ID_employee" Type="int" />
+          <Property Name="Number_Pavilion" Type="nvarchar" MaxLength="5" />
+          <Property Name="Status" Type="nvarchar" MaxLength="50" />
+          <Property Name="Start_Rent" Type="datetime" />
+          <Property Name="End_Rent" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Arendatory">
+          <Key>
+            <PropertyRef Name="ID_tenant" />
+          </Key>
+          <Property Name="ID_tenant" Type="int" Nullable="false" />
+          <Property Name="ID_rent" Type="int" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" />
+          <Property Name="Number" Type="nvarchar" MaxLength="50" />
+          <Property Name="Adress" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Pavilioni">
+          <Key>
+            <PropertyRef Name="Number_Pavilion" />
+            <PropertyRef Name="Number_SC" />
+          </Key>
+          <Property Name="Number_Pavilion" Type="nvarchar" MaxLength="5" Nullable="false" />
+          <Property Name="Number_SC" Type="int" Nullable="false" />
+          <Property Name="Floor" Type="int" />
+          <Property Name="Status" Type="nvarchar" MaxLength="50" />
+          <Property Name="Square" Type="float" />
+          <Property Name="CoastPerSquare" Type="float" />
+          <Property Name="ValueAddedFactor" Type="float" />
+        </EntityType>
+        <EntityType Name="Sotrudniki">
+          <Key>
+            <PropertyRef Name="ID_employee" />
+          </Key>
+          <Property Name="ID_employee" Type="int" Nullable="false" />
+          <Property Name="Surname" Type="nvarchar" MaxLength="50" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" />
+          <Property Name="SecondName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Login" Type="nvarchar" MaxLength="50" />
+          <Property Name="Password" Type="nvarchar" MaxLength="50" />
+          <Property Name="Role" Type="nvarchar" MaxLength="50" />
+          <Property Name="Number_Phone" Type="nvarchar" MaxLength="15" />
+          <Property Name="Sex" Type="nvarchar" MaxLength="1" />
+          <Property Name="Photo" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="TC">
+          <Key>
+            <PropertyRef Name="Number_SC" />
+          </Key>
+          <Property Name="Number_SC" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" />
+          <Property Name="Status" Type="nvarchar" MaxLength="255" />
+          <Property Name="City" Type="nvarchar" MaxLength="255" />
+          <Property Name="Price" Type="float" />
+          <Property Name="ValueAddedFactor" Type="float" />
+          <Property Name="Floors" Type="float" />
+          <Property Name="Picture" Type="varbinary(max)" />
+        </EntityType>
+        <Association Name="FK_Arenda_Arendatory">
+          <End Role="Arendatory" Type="Self.Arendatory" Multiplicity="0..1" />
+          <End Role="Arenda" Type="Self.Arenda" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Arendatory">
+              <PropertyRef Name="ID_tenant" />
+            </Principal>
+            <Dependent Role="Arenda">
+              <PropertyRef Name="ID_tenant" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Arenda_Pavilioni">
+          <End Role="Pavilioni" Type="Self.Pavilioni" Multiplicity="0..1" />
+          <End Role="Arenda" Type="Self.Arenda" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Pavilioni">
+              <PropertyRef Name="Number_Pavilion" />
+              <PropertyRef Name="Number_SC" />
+            </Principal>
+            <Dependent Role="Arenda">
+              <PropertyRef Name="Number_Pavilion" />
+              <PropertyRef Name="Number_SC" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Arenda_Sotrudniki">
+          <End Role="Sotrudniki" Type="Self.Sotrudniki" Multiplicity="0..1" />
+          <End Role="Arenda" Type="Self.Arenda" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sotrudniki">
+              <PropertyRef Name="ID_employee" />
+            </Principal>
+            <Dependent Role="Arenda">
+              <PropertyRef Name="ID_employee" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Pavilioni_TC">
+          <End Role="TC" Type="Self.TC" Multiplicity="1" />
+          <End Role="Pavilioni" Type="Self.Pavilioni" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TC">
+              <PropertyRef Name="Number_SC" />
+            </Principal>
+            <Dependent Role="Pavilioni">
+              <PropertyRef Name="Number_SC" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="RentOrBooked" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="status_action" Type="bit" Mode="In" />
+          <Parameter Name="Number_Pavilion" Type="nvarchar" Mode="In" />
+          <Parameter Name="Number_SC" Type="bigint" Mode="In" />
+          <Parameter Name="start_date" Type="date" Mode="In" />
+          <Parameter Name="end_date" Type="date" Mode="In" />
+          <Parameter Name="ID_tenant" Type="bigint" Mode="In" />
+          <Parameter Name="ID_employee" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="ThreeYears" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <EntityContainer Name="Хранилище KingITGalishnikovModelContainer">
+          <EntitySet Name="Arenda" EntityType="Self.Arenda" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Arendatory" EntityType="Self.Arendatory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Pavilioni" EntityType="Self.Pavilioni" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Sotrudniki" EntityType="Self.Sotrudniki" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TC" EntityType="Self.TC" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Arenda_Arendatory" Association="Self.FK_Arenda_Arendatory">
+            <End Role="Arendatory" EntitySet="Arendatory" />
+            <End Role="Arenda" EntitySet="Arenda" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Arenda_Pavilioni" Association="Self.FK_Arenda_Pavilioni">
+            <End Role="Pavilioni" EntitySet="Pavilioni" />
+            <End Role="Arenda" EntitySet="Arenda" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Arenda_Sotrudniki" Association="Self.FK_Arenda_Sotrudniki">
+            <End Role="Sotrudniki" EntitySet="Sotrudniki" />
+            <End Role="Arenda" EntitySet="Arenda" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Pavilioni_TC" Association="Self.FK_Pavilioni_TC">
+            <End Role="TC" EntitySet="TC" />
+            <End Role="Pavilioni" EntitySet="Pavilioni" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="KingITGalishnikovModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Arenda">
+          <Key>
+            <PropertyRef Name="ID_rent" />
+          </Key>
+          <Property Name="ID_rent" Type="Int32" Nullable="false" />
+          <Property Name="ID_tenant" Type="Int32" />
+          <Property Name="Number_SC" Type="Int32" />
+          <Property Name="ID_employee" Type="Int32" />
+          <Property Name="Number_Pavilion" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Start_Rent" Type="DateTime" Precision="3" />
+          <Property Name="End_Rent" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Arendatory" Relationship="Self.FK_Arenda_Arendatory" FromRole="Arenda" ToRole="Arendatory" />
+          <NavigationProperty Name="Pavilioni" Relationship="Self.FK_Arenda_Pavilioni" FromRole="Arenda" ToRole="Pavilioni" />
+          <NavigationProperty Name="Sotrudniki" Relationship="Self.FK_Arenda_Sotrudniki" FromRole="Arenda" ToRole="Sotrudniki" />
+        </EntityType>
+        <EntityType Name="Arendatory">
+          <Key>
+            <PropertyRef Name="ID_tenant" />
+          </Key>
+          <Property Name="ID_tenant" Type="Int32" Nullable="false" />
+          <Property Name="ID_rent" Type="Int32" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Number" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Adress" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Arenda" Relationship="Self.FK_Arenda_Arendatory" FromRole="Arendatory" ToRole="Arenda" />
+        </EntityType>
+        <EntityType Name="Pavilioni">
+          <Key>
+            <PropertyRef Name="Number_Pavilion" />
+            <PropertyRef Name="Number_SC" />
+          </Key>
+          <Property Name="Number_Pavilion" Type="String" MaxLength="5" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Number_SC" Type="Int32" Nullable="false" />
+          <Property Name="Floor" Type="Int32" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Square" Type="Double" />
+          <Property Name="CoastPerSquare" Type="Double" />
+          <Property Name="ValueAddedFactor" Type="Double" />
+          <NavigationProperty Name="Arenda" Relationship="Self.FK_Arenda_Pavilioni" FromRole="Pavilioni" ToRole="Arenda" />
+          <NavigationProperty Name="TC" Relationship="Self.FK_Pavilioni_TC" FromRole="Pavilioni" ToRole="TC" />
+        </EntityType>
+        <EntityType Name="Sotrudniki">
+          <Key>
+            <PropertyRef Name="ID_employee" />
+          </Key>
+          <Property Name="ID_employee" Type="Int32" Nullable="false" />
+          <Property Name="Surname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SecondName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Login" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Role" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Number_Phone" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="Sex" Type="String" MaxLength="1" FixedLength="false" Unicode="true" />
+          <Property Name="Photo" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <NavigationProperty Name="Arenda" Relationship="Self.FK_Arenda_Sotrudniki" FromRole="Sotrudniki" ToRole="Arenda" />
+        </EntityType>
+        <EntityType Name="TC">
+          <Key>
+            <PropertyRef Name="Number_SC" />
+          </Key>
+          <Property Name="Number_SC" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Double" />
+          <Property Name="ValueAddedFactor" Type="Double" />
+          <Property Name="Floors" Type="Double" />
+          <Property Name="Picture" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <NavigationProperty Name="Pavilioni" Relationship="Self.FK_Pavilioni_TC" FromRole="TC" ToRole="Pavilioni" />
+        </EntityType>
+        <Association Name="FK_Arenda_Arendatory">
+          <End Role="Arendatory" Type="Self.Arendatory" Multiplicity="0..1" />
+          <End Role="Arenda" Type="Self.Arenda" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Arendatory">
+              <PropertyRef Name="ID_tenant" />
+            </Principal>
+            <Dependent Role="Arenda">
+              <PropertyRef Name="ID_tenant" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Arenda_Pavilioni">
+          <End Role="Pavilioni" Type="Self.Pavilioni" Multiplicity="0..1" />
+          <End Role="Arenda" Type="Self.Arenda" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Pavilioni">
+              <PropertyRef Name="Number_Pavilion" />
+              <PropertyRef Name="Number_SC" />
+            </Principal>
+            <Dependent Role="Arenda">
+              <PropertyRef Name="Number_Pavilion" />
+              <PropertyRef Name="Number_SC" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Arenda_Sotrudniki">
+          <End Role="Sotrudniki" Type="Self.Sotrudniki" Multiplicity="0..1" />
+          <End Role="Arenda" Type="Self.Arenda" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sotrudniki">
+              <PropertyRef Name="ID_employee" />
+            </Principal>
+            <Dependent Role="Arenda">
+              <PropertyRef Name="ID_employee" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Pavilioni_TC">
+          <End Role="TC" Type="Self.TC" Multiplicity="1" />
+          <End Role="Pavilioni" Type="Self.Pavilioni" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TC">
+              <PropertyRef Name="Number_SC" />
+            </Principal>
+            <Dependent Role="Pavilioni">
+              <PropertyRef Name="Number_SC" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="KingITGalishnikovEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Arenda" EntityType="Self.Arenda" />
+          <EntitySet Name="Arendatory" EntityType="Self.Arendatory" />
+          <EntitySet Name="Pavilioni" EntityType="Self.Pavilioni" />
+          <EntitySet Name="Sotrudniki" EntityType="Self.Sotrudniki" />
+          <EntitySet Name="TC" EntityType="Self.TC" />
+          <AssociationSet Name="FK_Arenda_Arendatory" Association="Self.FK_Arenda_Arendatory">
+            <End Role="Arendatory" EntitySet="Arendatory" />
+            <End Role="Arenda" EntitySet="Arenda" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Arenda_Pavilioni" Association="Self.FK_Arenda_Pavilioni">
+            <End Role="Pavilioni" EntitySet="Pavilioni" />
+            <End Role="Arenda" EntitySet="Arenda" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Arenda_Sotrudniki" Association="Self.FK_Arenda_Sotrudniki">
+            <End Role="Sotrudniki" EntitySet="Sotrudniki" />
+            <End Role="Arenda" EntitySet="Arenda" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Pavilioni_TC" Association="Self.FK_Pavilioni_TC">
+            <End Role="TC" EntitySet="TC" />
+            <End Role="Pavilioni" EntitySet="Pavilioni" />
+          </AssociationSet>
+          <FunctionImport Name="RentOrBooked">
+            <Parameter Name="status_action" Mode="In" Type="Boolean" />
+            <Parameter Name="Number_Pavilion" Mode="In" Type="String" />
+            <Parameter Name="Number_SC" Mode="In" Type="Int64" />
+            <Parameter Name="start_date" Mode="In" Type="DateTime" />
+            <Parameter Name="end_date" Mode="In" Type="DateTime" />
+            <Parameter Name="ID_tenant" Mode="In" Type="Int64" />
+            <Parameter Name="ID_employee" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="ThreeYears" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="Хранилище KingITGalishnikovModelContainer" CdmEntityContainer="KingITGalishnikovEntities">
+          <EntitySetMapping Name="Arenda">
+            <EntityTypeMapping TypeName="KingITGalishnikovModel.Arenda">
+              <MappingFragment StoreEntitySet="Arenda">
+                <ScalarProperty Name="ID_rent" ColumnName="ID_rent" />
+                <ScalarProperty Name="ID_tenant" ColumnName="ID_tenant" />
+                <ScalarProperty Name="Number_SC" ColumnName="Number_SC" />
+                <ScalarProperty Name="ID_employee" ColumnName="ID_employee" />
+                <ScalarProperty Name="Number_Pavilion" ColumnName="Number_Pavilion" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Start_Rent" ColumnName="Start_Rent" />
+                <ScalarProperty Name="End_Rent" ColumnName="End_Rent" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Arendatory">
+            <EntityTypeMapping TypeName="KingITGalishnikovModel.Arendatory">
+              <MappingFragment StoreEntitySet="Arendatory">
+                <ScalarProperty Name="ID_tenant" ColumnName="ID_tenant" />
+                <ScalarProperty Name="ID_rent" ColumnName="ID_rent" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Number" ColumnName="Number" />
+                <ScalarProperty Name="Adress" ColumnName="Adress" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Pavilioni">
+            <EntityTypeMapping TypeName="KingITGalishnikovModel.Pavilioni">
+              <MappingFragment StoreEntitySet="Pavilioni">
+                <ScalarProperty Name="Number_Pavilion" ColumnName="Number_Pavilion" />
+                <ScalarProperty Name="Number_SC" ColumnName="Number_SC" />
+                <ScalarProperty Name="Floor" ColumnName="Floor" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Square" ColumnName="Square" />
+                <ScalarProperty Name="CoastPerSquare" ColumnName="CoastPerSquare" />
+                <ScalarProperty Name="ValueAddedFactor" ColumnName="ValueAddedFactor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sotrudniki">
+            <EntityTypeMapping TypeName="KingITGalishnikovModel.Sotrudniki">
+              <MappingFragment StoreEntitySet="Sotrudniki">
+                <ScalarProperty Name="ID_employee" ColumnName="ID_employee" />
+                <ScalarProperty Name="Surname" ColumnName="Surname" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="SecondName" ColumnName="SecondName" />
+                <ScalarProperty Name="Login" ColumnName="Login" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="Number_Phone" ColumnName="Number_Phone" />
+                <ScalarProperty Name="Sex" ColumnName="Sex" />
+                <ScalarProperty Name="Photo" ColumnName="Photo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TC">
+            <EntityTypeMapping TypeName="KingITGalishnikovModel.TC">
+              <MappingFragment StoreEntitySet="TC">
+                <ScalarProperty Name="Number_SC" ColumnName="Number_SC" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="ValueAddedFactor" ColumnName="ValueAddedFactor" />
+                <ScalarProperty Name="Floors" ColumnName="Floors" />
+                <ScalarProperty Name="Picture" ColumnName="Picture" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="RentOrBooked" FunctionName="Хранилище KingITGalishnikovModel.RentOrBooked" />
+          <FunctionImportMapping FunctionImportName="ThreeYears" FunctionName="Хранилище KingITGalishnikovModel.ThreeYears" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Нет" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

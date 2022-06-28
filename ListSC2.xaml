@@ -1,0 +1,59 @@
+﻿<Page x:Class="KingITGalishnikov.ListSC2"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:KingITGalishnikov"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ListSC2">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="130"/>
+            <RowDefinition Height="60"/>
+        </Grid.RowDefinitions>
+        <Image Width="200" Grid.Column="0" Grid.Row="6" Stretch="UniformToFill" HorizontalAlignment="Left" >
+            <Image.Source>
+                <Binding Path="Picture">
+                    <Binding.TargetNullValue>
+                        <ImageSource>Resources/DefaultPicture.jpg</ImageSource>
+                    </Binding.TargetNullValue>
+                </Binding>
+            </Image.Source>
+        </Image>
+        <TextBlock Text ="Название ТЦ" ></TextBlock>
+        <TextBlock Text ="КДС ТЦ" Grid.Row="1"></TextBlock>
+        <TextBlock Text="Статус" Grid.Row="2"></TextBlock>
+        <TextBlock Text="Затраты на ТЦ" Grid.Row="3"></TextBlock>
+        <TextBlock Text="Город ТЦ" Grid.Row="4"></TextBlock>
+        <TextBlock Text="Этажность" Grid.Row="5"></TextBlock>
+
+
+
+        <TextBox Text="{Binding Name}" Grid.Column="1" Width="600" MaxLength="100" HorizontalAlignment="Left"></TextBox>
+        <TextBox Text="{Binding ValueAddedFactor}" Grid.Row="1" Width="600"  HorizontalAlignment="Left" Grid.Column="1" ></TextBox>
+        <ComboBox SelectedItem="{Binding Status}" Grid.Row="2" Grid.Column="1" Width="600" HorizontalAlignment="Left" x:Name="ComboStatus" ></ComboBox>
+        <TextBox Text="{Binding Price}" Grid.Row="3" Width="600" HorizontalAlignment="Left"  Grid.Column="1" ></TextBox>
+        <TextBox Text="{Binding City}" Grid.Row="4" Width="600"  HorizontalAlignment="Left" Grid.Column="1" ></TextBox>
+        <TextBox Text="{Binding Floors}" Grid.Row="5" Width="600"  HorizontalAlignment="Left" Grid.Column="1" ></TextBox>
+
+
+
+
+        <Button Content="Установить изображение" Width="160" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="6" Name="BtnPicSave" Click="BtnPicSave_Click" Margin="10,49,0,46"></Button>
+        <Button Content="Сохранить" Grid.Row="7" Width="100" Name="BtnSave" Click="BtnSave_Click" Margin="112,0,353,23" Grid.Column="1"/>
+        <Button Content="Переход к павильонам" Grid.Row="7" HorizontalAlignment="Right" Width="141" Name="BtnPavilion" Click="BtnPavilion_Click" Margin="0,0,36,23" Grid.Column="1"/>
+    </Grid>
+
+</Page>
